@@ -43,3 +43,19 @@ restaurant_tables2 = [
     [5,        'o',      'x',      'o',      'x',      'o',      'o'],
     [6,        'o',      'o',      'o',      'o',      'x',      'o']
 ]
+
+#--------------------------------------------------------------------------------------
+#Level 1
+def table_check(tables, time):
+    #making list to put the data in
+    free_tables = []
+    #loops the the tabels
+    for i in range(1, len(restaurant_tables2[0])):
+        #checks if the tables are open
+        if tables[time][i] == 'o':
+            #adds all open tables to the list
+            free_tables.append(tables[0][i])
+    #returns tables
+    return free_tables
+
+#-------------------------------------------------------------------------------------
