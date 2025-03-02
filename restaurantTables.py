@@ -50,12 +50,44 @@ def table_check(tables, time):
     #making list to put the data in
     free_tables = []
     #loops the the tabels
-    for i in range(1, len(restaurant_tables2[0])):
+    for i in range(1, len(tables[0])):
         #checks if the tables are open
         if tables[time][i] == 'o':
             #adds all open tables to the list
             free_tables.append(tables[0][i])
     #returns tables
     return free_tables
-
-#-------------------------------------------------------------------------------------
+#test call 
+print(table_check(restaurant_tables2, 2))
+#--------------------------------------------------------------------------------------
+#Level 2
+def party_size(tables, time, party):
+    #loops tables
+    for i in range(1, len(tables[0])):
+        #gets the name of the table ex T1(2)
+        table_name = tables[0][i]
+        #string that shall hold the table_name
+        seating_amount = ''
+        #loop the the T1(2)
+        for character in table_name:
+            #to get the value inbetween the parentheses
+            if character == '(':
+                #gets value
+                seating_amount = ''
+            elif character == ')':
+                #stops collection value
+                break
+            elif character.isdigit():
+                #adds value
+                seating_amount += character
+        #to make the numbers comparable
+        seating_capacity = int(seating_amount)
+        #checks if table is open AND the seating is enought
+        if tables[time][i] == 'o' and seating_capacity >= party:
+            #returns
+            return table_name
+    #if nothing return nothing
+    return None
+#test call
+print(party_size(restaurant_tables2, 2, 6))
+#--------------------------------------------------------------------------------------
