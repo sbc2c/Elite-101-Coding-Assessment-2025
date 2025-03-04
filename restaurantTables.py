@@ -1,19 +1,4 @@
 # ------------------------------------------------------------------------------------
-# The following 2D lists mimic a restaurant seating layout, similar to a grid.
-# 
-# - Row 0 is a "header row":
-#     - The first cell (index 0) is just a row label (0).
-#     - The remaining cells are table labels with capacities in parentheses,
-#       e.g., 'T1(2)' means "Table 1" has capacity 2.
-#
-# - Rows 1 through 6 each represent a distinct "timeslot" or "seating period":
-#     - The first cell in each row (e.g., [1], [2], etc.) is that row's label (the timeslot number).
-#     - Each subsequent cell shows whether the table (from the header row) is
-#       free ('o') or occupied ('x') during that timeslot.
-#
-# In other words, restaurant_tables[row][column] tells you the status of a
-# particular table (column) at a particular timeslot (row).
-# ------------------------------------------------------------------------------------
 
 # Shows the structure of the restaurant layout with all tables free ("o" = open).
 restaurant_tables = [
@@ -25,19 +10,12 @@ restaurant_tables = [
     [5,        'o',      'o',      'o',      'o',      'o',      'o'],
     [6,        'o',      'o',      'o',      'o',      'o',      'o']
 ]
-
-# ------------------------------------------------------------------------------------
-# This second layout serves as a test case where some tables ('x') are already occupied.
-# Use this for testing your logic to:
-#   - Find free tables (marked 'o')
-#   - Check if those tables meet a certain capacity (from the header row, e.g. 'T1(2)')
-#   - Potentially combine adjacent tables if one alone isn't enough for a larger party.
 # ------------------------------------------------------------------------------------
 
 restaurant_tables2 = [
     [0,        'T1(2)',  'T2(4)',  'T3(2)',  'T4(6)',  'T5(4)',  'T6(2)'],
     [1,        'x',      'o',      'o',      'o',      'o',      'x'],
-    [2,        'o',      'x',      'o',      'o',      'x',      'o'],
+    [2,        'o',      'x',      'o',      'o',      'x',      'x'],
     [3,        'x',      'x',      'o',      'x',      'o',      'o'],
     [4,        'o',      'o',      'o',      'x',      'o',      'x'],
     [5,        'o',      'x',      'o',      'x',      'o',      'o'],
@@ -57,60 +35,47 @@ def table_check(tables, time):
             free_tables.append(tables[0][i])
     #returns tables
     return free_tables
-#test call 
-print(table_check(restaurant_tables2, 2))
 #--------------------------------------------------------------------------------------
 #Level 2
 def party_size(tables, time, party):
-    #loops tables
     for i in range(1, len(tables[0])):
-        #gets the name of the table ex T1(2)
         table_name = tables[0][i]
-        #string that shall hold the table_name
+        #empty string for adding
         seating_amount = ''
-        #loop the the T1(2)
+        #gets the number
         for character in table_name:
-            #to get the value inbetween the parentheses
             if character == '(':
-                #gets value
                 seating_amount = ''
             elif character == ')':
-                #stops collection value
                 break
+            #checks number
             elif character.isdigit():
-                #adds value
+                #adds number
                 seating_amount += character
-        #to make the numbers comparable
+        #add the number to the empty string
         seating_capacity = int(seating_amount)
-        #checks if table is open AND the seating is enought
+        #checks if is open
         if tables[time][i] == 'o' and seating_capacity >= party:
-            #returns
             return table_name
-    #if nothing return nothing
     return None
-#test call
-print(party_size(restaurant_tables2, 2, 6))
 #--------------------------------------------------------------------------------------
 #Level 3
-def tables_for_party(tables, time, party):
-    #empty list for all possible tables depending on party size
+def tables_for_party(tables, party):
     able_tables = []
-    #loops the tables
+    
     for i in range(1, len(tables[0])):
         table_name = tables[0][i]
-        #string to store value
+        
         seating_amount = ''
-        #grabs amount of people seatable at a table
+        
         for character in table_name:
             if character == '(':
                 seating_amount = ''
             elif character == ')':
                 break
-            #checks if digit
             elif character.isdigit():
-                #adds to empty string
                 seating_amount += character
-        #makes int so its comparable        
+                
         seating_capacity = int(seating_amount)
         #checks availability of timeslots
         for time in range(1, len(tables)):
@@ -123,6 +88,58 @@ def tables_for_party(tables, time, party):
                 break
     #returns if exists
     return able_tables or None
-#test call
-print(tables_for_party(restaurant_tables2, 4))
 #----------------------------------------------------------------------------------------
+#Level 4
+def combine_party(tables, party):
+    able_tables = []
+    #same as previous
+    for i in range(1, len(tables[0])):
+        table_name = tables[0][i]
+        
+        seating_amount = ''
+        
+        #extract seating capacity from the table name
+        for character in table_name:
+            if character == '(':
+                seating_amount = ''
+            elif character == ')':
+                break
+            elif character.isdigit():
+                seating_amount += character
+        seating_capacity = int(seating_amount)
+        #check availability for the current table alone
+        for time in range(1, len(tables)):
+            if tables[time][i] == 'o' and seating_capacity >= party:
+                able_tables.append([table_name])
+                break 
+        #check availability for adjacent table pairs
+        if i < len(tables[0]) - 1:
+            next_table_name = tables[0][i + 1]
+            
+            #checking next items
+            
+            #extract seating capacity of the next table
+            next_seating_capacity = ''
+            for character in next_table_name:
+                if character == '(':
+                    next_seating_capacity = ''
+                elif character == ')':
+                    break
+                elif character.isdigit():
+                    next_seating_capacity += character
+            next_seating_capacity = int(next_seating_capacity)
+            
+            #check if table1 + table2 = amount of party
+            for time in range(1, len(tables)):
+                if tables[time][i] == 'o' and tables[time][i + 1] == 'o' and (seating_capacity + next_seating_capacity) >= party:
+                    able_tables.append([table_name, next_table_name]) 
+                    break 
+    
+    return able_tables or None
+#-----------------------------------------------------------------------------------------
+#Testing
+
+#print(table_check(restaurant_tables2, 2))
+#print(party_size(restaurant_tables2, 2, 2))
+#print(tables_for_party(restaurant_tables2, 2))
+#print(combine_party(restaurant_tables2, 5))
