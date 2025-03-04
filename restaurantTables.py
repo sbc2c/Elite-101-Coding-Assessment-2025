@@ -91,3 +91,38 @@ def party_size(tables, time, party):
 #test call
 print(party_size(restaurant_tables2, 2, 6))
 #--------------------------------------------------------------------------------------
+#Level 3
+def tables_for_party(tables, time, party):
+    #empty list for all possible tables depending on party size
+    able_tables = []
+    #loops the tables
+    for i in range(1, len(tables[0])):
+        table_name = tables[0][i]
+        #string to store value
+        seating_amount = ''
+        #grabs amount of people seatable at a table
+        for character in table_name:
+            if character == '(':
+                seating_amount = ''
+            elif character == ')':
+                break
+            #checks if digit
+            elif character.isdigit():
+                #adds to empty string
+                seating_amount += character
+        #makes int so its comparable        
+        seating_capacity = int(seating_amount)
+        #checks availability of timeslots
+        for time in range(1, len(tables)):
+            #checks if the party size matches up
+            if tables[time][i] == 'o' and seating_capacity >= party:
+                #checks if the name is not already added
+                if table_name not in able_tables:
+                    #adds name if no dupes
+                    able_tables.append(table_name)
+                break
+    #returns if exists
+    return able_tables or None
+#test call
+print(tables_for_party(restaurant_tables2, 4))
+#----------------------------------------------------------------------------------------
